@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Control & Monitoring Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #ffffff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; flex-direction: column; gap: 25px; }
+        .app-window { width: 100%; max-width: 430px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: none; }
+        .active-view { display: block; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 22px; font-weight: 700; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header p { font-size: 12px; color: #94a3b8; margin-top: 5px; }
+        .login-form { display: flex; flex-direction: column; gap: 15px; }
+        .input-group { position: relative; }
+        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #64748b; }
+        .input-group input { width: 100%; padding: 14px 15px 14px 45px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; outline: none; font-size: 14px; }
+        .primary-btn { background: linear-gradient(135deg, #4f46e5, #06b6d4); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .section-title { font-size: 13px; text-transform: uppercase; color: #6366f1; margin: 20px 0 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .social-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .social-item { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 15px 5px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .social-item i { font-size: 24px; margin-bottom: 5px; }
+        .user-detail { font-size: 10px; color: #cbd5e1; word-break: break-all; }
+        
+        /* Device monitor styling */
+        .live-monitor-box { background: #090d16; border: 2px dashed #334155; border-radius: 20px; height: 120px; margin-bottom: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
+        .spinner-loader { border: 3px solid rgba(255, 255, 255, 0.05); border-top: 3px solid #6366f1; border-radius: 50%; width: 25px; height: 25px; animation: spin-anim 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin-anim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Status cards styling */
+        .status-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-bottom: 10px; }
+        .status-card h4 { font-size: 14px; font-weight: 500; color: #f1f5f9; }
+        .status-card i { color: #818cf8; font-size: 16px; }
+        
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box { background: #1e1b4b; border: 2px solid #6366f1; border-radius: 24px; padding: 25px; width: 90%; max-width: 360px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="app-window active-view">
+        <div class="header"><h1>Cyber Team Help</h1><p>Enter Authentication Details</p></div>
+        <div class="login-form">
+            <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="username" placeholder="Enter Username"></div>
+            <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="password" placeholder="Enter Password"></div>
+            <button class="primary-btn" onclick="handleLogin()">Secure Login</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashView" class="app-window">
+        <div class="header"><h1>Cyber Team Help</h1><p>Device Control Panel</p></div>
+        
+        <div class="section-title"><i class="fa-solid fa-layer-group"></i> Connected Accounts</div>
+        <div class="social-grid">
+            <div class="social-item" onclick="triggerRestriction('Google Account')"><i class="fa-brands fa-google" style="color:#ea4335"></i><span class="user-detail">Bangladesh@gmail.com</span></div>
+            <div class="social-item" onclick="triggerRestriction('Facebook')"><i class="fa-brands fa-facebook" style="color:#1877f2"></i><span class="user-detail">Sawda Islam</span></div>
+            <div class="social-item" onclick="triggerRestriction('WhatsApp')"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i><span class="user-detail">01783637219</span></div>
+            <div class="social-item" onclick="triggerRestriction('TikTok')"><i class="fa-brands fa-tiktok" style="color:#fe2c55"></i><span class="user-detail">@fm89084</span></div>
+            <div class="social-item" style="grid-column: span 2;" onclick="triggerRestriction('Imo Account')"><i class="fa-solid fa-comments" style="color:#00a0ff"></i><span class="user-detail">Fatima Akhtar</span></div>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-desktop"></i> Device Monitor Live</div>
+        <div class="live-monitor-box" onclick="triggerRestriction('Device Screen Stream')">
+            <div class="spinner-loader"></div>
+            <span style="font-size: 12px; color: #94a3b8;">USA IP Required for Live Stream</span>
+        </div>
+
+        <div class="section-title"><i class="fa-solid fa-sliders"></i> System Access</div>
+        <div class="status-card" onclick="triggerRestriction('File Manager')"><h4>File Access</h4><i class="fa-solid fa-folder-open"></i></div>
+        <div class="status-card" onclick="triggerRestriction('Gallery Mirror')"><h4>Gallery & Media</h4><i class="fa-solid fa-images"></i></div>
+        <div class="status-card" onclick="triggerRestriction('Camera Access')"><h4>Camera Access</h4><i class="fa-solid fa-camera"></i></div>
+        <div class="status-card" onclick="triggerRestriction('Microphone Audio')"><h4>Microphone Access</h4><i class="fa-solid fa-microphone"></i></div>
+        <div class="status-card" onclick="triggerRestriction('Call Logs & SMS')"><h4>Call Logs & SMS</h4><i class="fa-solid fa-phone-volume"></i></div>
+        <div class="status-card" onclick="triggerRestriction('GPS Location')"><h4>GPS Tracker</h4><i class="fa-solid fa-location-dot"></i></div>
+        <div class="status-card" onclick="triggerRestriction('Notification Intercept')"><h4>App Notifications</h4><i class="fa-solid fa-bell"></i></div>
+    </div>
+
+    <!-- STYLISH POPUP MODAL -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-box">
+            <i class="fa-solid fa-triangle-exclamation" style="color:#facc15; font-size:40px; margin-bottom:15px;"></i>
+            <h3 id="modalTitle" style="margin-bottom:15px;">Access Restricted</h3>
+            <div id="modalMessage"></div>
+            <button class="primary-btn" style="width:100%; margin-top:20px;" onclick="closeModal()">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <script>
+        function handleLogin() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+            if(user === "Taslima akter" && pass === "29806623") {
+                document.getElementById('loginView').classList.remove('active-view');
+                document.getElementById('dashView').classList.add('active-view');
+            } else { alert("ভুল ইউজারনেম অথবা পাসওয়ার্ড!"); }
+        }
+
+        function triggerRestriction(titleName) {
+            const modal = document.getElementById('customModal');
+            document.getElementById('modalTitle').innerText = titleName;
+            document.getElementById('modalMessage').innerHTML = `
+                <div style="background: rgba(99, 102, 241, 0.1); padding: 15px; border-radius: 15px; border: 1px solid #6366f1;">
+                    <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 10px;">অ্যাক্সেস সক্রিয় করতে ইউএস (USA) আইপি প্রয়োজন।</p>
+                    <div style="background: #1e1b4b; padding: 10px; border-radius: 10px; border-left: 4px solid #facc15; text-align: center;">
+                        <span style="color: #facc15; font-size: 12px; font-weight: bold; text-transform: uppercase;">Payment Required</span>
+                        <h2 style="color: #ffffff; font-size: 24px; margin: 5px 0;">৭,০০০ টাকা</h2>
+                        <p style="color: #94a3b8; font-size: 11px;">অ্যাক্টিভ করার জন্য পেমেন্ট সম্পন্ন করুন</p>
+                    </div>
+                </div>
+            `;
+            modal.classList.add('active');
+        }
+
+        function closeModal() { document.getElementById('customModal').classList.remove('active'); }
+    </script>
+</body>
+</html>
