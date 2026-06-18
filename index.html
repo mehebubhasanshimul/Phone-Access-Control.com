@@ -3,120 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Control & Monitoring Dashboard</title>
+    <title>Cyber System | Professional Interface</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: linear-gradient(135deg, #0f172a, #1e1b4b); color: #ffffff; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; flex-direction: column; gap: 25px; }
-        .app-window { width: 100%; max-width: 430px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: none; }
-        .active-view { display: block; }
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { font-size: 22px; font-weight: 700; background: linear-gradient(to right, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header p { font-size: 12px; color: #94a3b8; margin-top: 5px; }
-        .login-form { display: flex; flex-direction: column; gap: 15px; }
-        .input-group { position: relative; }
-        .input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #64748b; }
-        .input-group input { width: 100%; padding: 14px 15px 14px 45px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: white; outline: none; font-size: 14px; }
-        .primary-btn { background: linear-gradient(135deg, #4f46e5, #06b6d4); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-        .section-title { font-size: 13px; text-transform: uppercase; color: #6366f1; margin: 20px 0 15px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .social-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .social-item { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; padding: 15px 5px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-        .social-item i { font-size: 24px; margin-bottom: 5px; }
-        .user-detail { font-size: 10px; color: #cbd5e1; word-break: break-all; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@300;400;600&display=swap');
         
-        /* Device monitor styling */
-        .live-monitor-box { background: #090d16; border: 2px dashed #334155; border-radius: 20px; height: 120px; margin-bottom: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
-        .spinner-loader { border: 3px solid rgba(255, 255, 255, 0.05); border-top: 3px solid #6366f1; border-radius: 50%; width: 25px; height: 25px; animation: spin-anim 1s linear infinite; margin-bottom: 10px; }
-        @keyframes spin-anim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: radial-gradient(circle at center, #1e1b4b, #0f172a, #000000); color: #ffffff; min-height: 100vh; display: flex; justify-content: center; align-align: center; padding: 20px; justify-content: center; align-items: center; }
         
-        /* Status cards styling */
-        .status-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; margin-bottom: 10px; }
-        .status-card h4 { font-size: 14px; font-weight: 500; color: #f1f5f9; }
-        .status-card i { color: #818cf8; font-size: 16px; }
+        .app-window { width: 100%; max-width: 450px; background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 30px; padding: 25px; box-shadow: 0 0 40px rgba(99, 102, 241, 0.15); }
+        .hidden { display: none; }
+        h2 { font-family: 'Orbitron', sans-serif; text-align: center; margin-bottom: 20px; color: #fff; text-shadow: 0 0 10px #6366f1; }
+        .input-field { width: 100%; padding: 14px; margin-bottom: 15px; background: rgba(0, 0, 0, 0.4); border: 1px solid #4f46e5; border-radius: 12px; color: #fff; outline: none; }
+        .btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #6366f1, #f472b6); border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .btn:hover { opacity: 0.9; box-shadow: 0 0 15px rgba(244, 114, 182, 0.4); }
         
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 999; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
-        .modal-box { background: #1e1b4b; border: 2px solid #6366f1; border-radius: 24px; padding: 25px; width: 90%; max-width: 360px; text-align: center; }
+        .section-title { font-size: 11px; color: #818cf8; margin: 20px 0 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        
+        /* Modern Premium VPN Box */
+        .vpn-box { background: linear-gradient(135deg, #0f172a, #1e1b4b); padding: 18px; border-radius: 20px; text-align: center; border: 1px solid #312e81; box-shadow: inset 0 0 15px rgba(99, 102, 241, 0.1); }
+        .vpn-status-container { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 12px; }
+        .status-dot { width: 10px; height: 10px; background-color: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; transition: all 0.5s ease; }
+        .status-dot.connected { background-color: #22c55e; box-shadow: 0 0 12px #22c55e; animation: pulse 1.5s infinite; }
+        #vpnStatus { font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: bold; color: #ef4444; transition: all 0.5s ease; }
+        
+        /* VPN Loading Bar */
+        .progress-bar-container { width: 100%; height: 6px; background: #334155; border-radius: 3px; margin: 10px 0; overflow: hidden; display: none; }
+        .progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, #22c55e, #4ade80); border-radius: 3px; }
+
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        
+        /* Grid Layout for Accounts */
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .item-card { background: rgba(30, 41, 59, 0.7); padding: 14px; border-radius: 15px; text-align: left; cursor: pointer; border: 1px solid #334155; transition: all 0.2s ease; }
+        .item-card:hover { background: rgba(51, 65, 85, 0.9); border-color: #6366f1; transform: translateY(-2px); }
+        .item-card p { font-size: 11px; margin-top: 4px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .item-card span { font-size: 9px; color: #94a3b8; display: block; }
+        .item-card i { font-size: 22px; margin-bottom: 5px; }
+
+        /* Live Monitor Row with Animation */
+        .live-icon { animation: rotate 2s linear infinite; display: inline-block; color: #ef4444; transition: color 0.5s; }
+        .live-icon.active { color: #22c55e; }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* List Layout */
+        .status-card { background: rgba(30, 41, 59, 0.7); padding: 14px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #334155; cursor: pointer; transition: all 0.2s; }
+        .status-card:hover { background: rgba(51, 65, 85, 0.9); border-color: #6366f1; }
+        
+        /* Video Overlay Screen Box inside Modal */
+        .video-container { width: 100%; height: 180px; background: #000; border-radius: 12px; position: relative; overflow: hidden; border: 2px solid #334155; margin-bottom: 15px; box-shadow: inset 0 0 20px rgba(0,255,0,0.2); }
+        .video-overlay { position: absolute; top: 10px; left: 10px; display: flex; align-items: center; gap: 8px; font-family: 'Orbitron', sans-serif; font-size: 12px; color: #ef4444; }
+        .rec-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: pulse 1s infinite; }
+        .video-grid-lines { position: absolute; width: 100%; height: 100%; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 4px, 6px 100%; }
+        .scan-line { width: 100%; height: 4px; background: rgba(34, 197, 94, 0.4); box-shadow: 0 0 10px #22c55e; position: absolute; top: 0; animation: scan 3s linear infinite; }
+        @keyframes scan { 0% { top: 0; } 50% { top: 100%; } 100% { top: 0; } }
+
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN VIEW -->
-    <div id="loginView" class="app-window active-view">
-        <div class="header"><h1>Cyber Team Help</h1><p>Enter Authentication Details</p></div>
-        <div class="login-form">
-            <div class="input-group"><i class="fa-solid fa-user"></i><input type="text" id="username" placeholder="Enter Username"></div>
-            <div class="input-group"><i class="fa-solid fa-lock"></i><input type="password" id="password" placeholder="Enter Password"></div>
-            <button class="primary-btn" onclick="handleLogin()">Secure Login</button>
-        </div>
+    <div id="loginView" class="app-window">
+        <h2>CYBER TEAM</h2>
+        <input type="text" id="username" class="input-field" placeholder="Username">
+        <input type="password" id="password" class="input-field" placeholder="Password">
+        <button class="btn" onclick="handleLogin()">Login System</button>
     </div>
 
-    <!-- DASHBOARD VIEW -->
-    <div id="dashView" class="app-window">
-        <div class="header"><h1>Cyber Team Help</h1><p>Device Control Panel</p></div>
-        
-        <div class="section-title"><i class="fa-solid fa-layer-group"></i> Connected Accounts</div>
-        <div class="social-grid">
-            <div class="social-item" onclick="triggerRestriction('Google Account')"><i class="fa-brands fa-google" style="color:#ea4335"></i><span class="user-detail">Bangladesh@gmail.com</span></div>
-            <div class="social-item" onclick="triggerRestriction('Facebook')"><i class="fa-brands fa-facebook" style="color:#1877f2"></i><span class="user-detail">Sawda Islam</span></div>
-            <div class="social-item" onclick="triggerRestriction('WhatsApp')"><i class="fa-brands fa-whatsapp" style="color:#25d366"></i><span class="user-detail">01783637219</span></div>
-            <div class="social-item" onclick="triggerRestriction('TikTok')"><i class="fa-brands fa-tiktok" style="color:#fe2c55"></i><span class="user-detail">@fm89084</span></div>
-            <div class="social-item" style="grid-column: span 2;" onclick="triggerRestriction('Imo Account')"><i class="fa-solid fa-comments" style="color:#00a0ff"></i><span class="user-detail">Fatima Akhtar</span></div>
+    <div id="dashView" class="app-window hidden">
+        <div class="vpn-box">
+            <div class="vpn-status-container">
+                <div id="vpnDot" class="status-dot"></div>
+                <h4 id="vpnStatus">VPN Disconnected</h4>
+            </div>
+            <div class="progress-bar-container" id="progressBarContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <button class="btn" style="padding: 10px; font-size:13px; font-family:'Orbitron';" id="vpnBtn" onclick="toggleVPN()">Connect USA IP</button>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-desktop"></i> Device Monitor Live</div>
-        <div class="live-monitor-box" onclick="triggerRestriction('Device Screen Stream')">
-            <div class="spinner-loader"></div>
-            <span style="font-size: 12px; color: #94a3b8;">USA IP Required for Live Stream</span>
+        <div class="section-title">Live Device Monitoring</div>
+        <div class="status-card" onclick="checkAccess('Live Screen Monitor')">
+            <span>Live Screen Monitor (Video Feed)</span>
+            <i id="liveScreenIcon" class="fa-solid fa-circle-notch live-icon"></i>
         </div>
 
-        <div class="section-title"><i class="fa-solid fa-sliders"></i> System Access</div>
-        <div class="status-card" onclick="triggerRestriction('File Manager')"><h4>File Access</h4><i class="fa-solid fa-folder-open"></i></div>
-        <div class="status-card" onclick="triggerRestriction('Gallery Mirror')"><h4>Gallery & Media</h4><i class="fa-solid fa-images"></i></div>
-        <div class="status-card" onclick="triggerRestriction('Camera Access')"><h4>Camera Access</h4><i class="fa-solid fa-camera"></i></div>
-        <div class="status-card" onclick="triggerRestriction('Microphone Audio')"><h4>Microphone Access</h4><i class="fa-solid fa-microphone"></i></div>
-        <div class="status-card" onclick="triggerRestriction('Call Logs & SMS')"><h4>Call Logs & SMS</h4><i class="fa-solid fa-phone-volume"></i></div>
-        <div class="status-card" onclick="triggerRestriction('GPS Location')"><h4>GPS Tracker</h4><i class="fa-solid fa-location-dot"></i></div>
-        <div class="status-card" onclick="triggerRestriction('Notification Intercept')"><h4>App Notifications</h4><i class="fa-solid fa-bell"></i></div>
+        <div class="section-title">Connected Accounts</div>
+        <div class="grid-container">
+            <div class="item-card" onclick="checkAccess('Google Cloud')">
+                <i class="fa-brands fa-google" style="color:#ea4335"></i>
+                <p>Bangladesh@gmail.com</p>
+                <span>Google Account</span>
+            </div>
+            <div class="item-card" onclick="checkAccess('Facebook Profile')">
+                <i class="fa-brands fa-facebook" style="color:#1877f2"></i>
+                <p>Sawda Islam</p>
+                <span>Facebook </span>
+            </div>
+            <div class="item-card" onclick="checkAccess('WhatsApp Session')">
+                <i class="fa-brands fa-whatsapp" style="color:#25d366"></i>
+                <p>01783637219</p>
+                <span>WhatsApp </span>
+            </div>
+            <div class="item-card" onclick="checkAccess('TikTok Feed')">
+                <i class="fa-brands fa-tiktok" style="color:#fe2c55"></i>
+                <p>@fm89084</p>
+                <span>TikTok </span>
+            </div>
+            <div class="item-card" style="grid-column: span 2;" onclick="checkAccess('Imo Chat')">
+                <i class="fa-solid fa-comments" style="color:#00a2ed"></i>
+                <p>Fatima Akhtar</p>
+                <span>Imo </span>
+            </div>
+        </div>
+
+        <div class="section-title">System Access</div>
+        <div class="status-card" onclick="checkAccess('File Access')"><span>File & Storage Access</span><i class="fa-solid fa-folder"></i></div>
+        <div class="status-card" onclick="checkAccess('Gallery Access')"><span>Gallery Mirror</span><i class="fa-solid fa-images"></i></div>
+        <div class="status-card" onclick="checkAccess('Call History')"><span>Call History & Logs</span><i class="fa-solid fa-phone-volume"></i></div>
+        <div class="status-card" onclick="checkAccess('GPS Tracker')"><span>GPS Location Tracker</span><i class="fa-solid fa-location-dot"></i></div>
     </div>
 
-    <!-- STYLISH POPUP MODAL -->
-    <div class="modal-overlay" id="customModal">
-        <div class="modal-box">
-            <i class="fa-solid fa-triangle-exclamation" style="color:#facc15; font-size:40px; margin-bottom:15px;"></i>
-            <h3 id="modalTitle" style="margin-bottom:15px;">Access Restricted</h3>
-            <div id="modalMessage"></div>
-            <button class="primary-btn" style="width:100%; margin-top:20px;" onclick="closeModal()">ঠিক আছে</button>
+    <div id="modal" class="modal">
+        <div class="app-window" style="text-align:center;">
+            <h2 id="modalTitle">Access</h2>
+            <div id="modalBody" style="margin: 20px 0; color: #cbd5e1;"></div>
+            <button class="btn" onclick="document.getElementById('modal').style.display='none'">Close</button>
         </div>
     </div>
 
     <script>
+        // Authentication Configuration
         function handleLogin() {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
-            if(user === "Taslima akter" && pass === "29806623") {
-                document.getElementById('loginView').classList.remove('active-view');
-                document.getElementById('dashView').classList.add('active-view');
-            } else { alert("ভুল ইউজারনেম অথবা পাসওয়ার্ড!"); }
+            if(document.getElementById('username').value === "Taslima akter" && document.getElementById('password').value === "29806623") {
+                document.getElementById('loginView').classList.add('hidden');
+                document.getElementById('dashView').classList.remove('hidden');
+            } else { alert("Invalid Credentials!"); }
         }
 
-        function triggerRestriction(titleName) {
-            const modal = document.getElementById('customModal');
-            document.getElementById('modalTitle').innerText = titleName;
-            document.getElementById('modalMessage').innerHTML = `
-                <div style="background: rgba(99, 102, 241, 0.1); padding: 15px; border-radius: 15px; border: 1px solid #6366f1;">
-                    <p style="color: #cbd5e1; font-size: 14px; margin-bottom: 10px;">অ্যাক্সেস সক্রিয় করতে ইউএস (USA) আইপি প্রয়োজন।</p>
-                    <div style="background: #1e1b4b; padding: 10px; border-radius: 10px; border-left: 4px solid #facc15; text-align: center;">
-                        <span style="color: #facc15; font-size: 12px; font-weight: bold; text-transform: uppercase;">Payment Required</span>
-                        <h2 style="color: #ffffff; font-size: 24px; margin: 5px 0;">৭,০০০ টাকা</h2>
-                        <p style="color: #94a3b8; font-size: 11px;">অ্যাক্টিভ করার জন্য পেমেন্ট সম্পন্ন করুন</p>
-                    </div>
-                </div>
-            `;
-            modal.classList.add('active');
+        // Advanced Animated VPN Control
+        let vpn = false;
+        function toggleVPN() {
+            if (!vpn) {
+                // Connection Procedure
+                document.getElementById('vpnBtn').disabled = true;
+                document.getElementById('progressBarContainer').style.display = "block";
+                document.getElementById('vpnStatus').innerText = "Connecting to USA...";
+                document.getElementById('vpnStatus').style.color = "#fbbf24";
+                
+                let width = 0;
+                let interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        vpn = true;
+                        document.getElementById('vpnDot').classList.add('connected');
+                        document.getElementById('vpnStatus').innerText = "USA SECURE IP ACTIVE";
+                        document.getElementById('vpnStatus').style.color = "#22c55e";
+                        document.getElementById('vpnBtn').innerText = "Disconnect Tunnel";
+                        document.getElementById('vpnBtn').disabled = false;
+                        document.getElementById('liveScreenIcon').classList.add('active');
+                        document.getElementById('progressBarContainer').style.display = "none";
+                        document.getElementById('progressBar').style.width = "0%";
+                    } else {
+                        width += 5;
+                        document.getElementById('progressBar').style.width = width + "%";
+                    }
+                }, 100);
+            } else {
+                // Disconnection Procedure
+                vpn = false;
+                document.getElementById('vpnDot').classList.remove('connected');
+                document.getElementById('vpnStatus').innerText = "VPN Disconnected";
+                document.getElementById('vpnStatus').style.color = "#ef4444";
+                document.getElementById('vpnBtn').innerText = "Connect USA IP";
+                document.getElementById('liveScreenIcon').classList.remove('active');
+            }
         }
 
-        function closeModal() { document.getElementById('customModal').classList.remove('active'); }
+        // Access Modal Routing Logic
+        function checkAccess(item) {
+            document.getElementById('modalTitle').innerText = item;
+            
+            if(vpn) {
+                let videoLayout = "";
+                // Specific Layout injected for Live Video Monitor Request
+                if(item.includes('Live Screen')) {
+                    videoLayout = `
+                        <div class="video-container">
+                            <div class="video-grid-lines"></div>
+                            <div class="scan-line"></div>
+                            <div class="video-overlay">
+                                <div class="rec-dot"></div>
+                                <span>LIVE FEED // ENCRYPTED</span>
+                            </div>
+                            <div style="display:flex; justify-content:center; align-items:center; height:100%; color:#4ade80; font-family:'Orbitron'; font-size:11px; letter-spacing:1px; flex-direction:column; gap:10px;">
+                                <i class="fa-solid fa-eye-slash style="font-size:24px;"></i>
+                                <span>TUNNEL CONNECTION STABLE</span>
+                            </div>
+                        </div>`;
+                }
+
+                document.getElementById('modalBody').innerHTML = videoLayout + `
+                    <div style="background:#0f172a; padding:20px; border-radius:15px; border:1px solid #eab308;">
+                        <h2 style="color:#eab308; font-size: 18px; margin-bottom:10px;">অ্যাক্টিভেশন রিকোয়েস্ট</h2>
+                        <p style="margin-bottom: 15px; font-size:14px;">এই সিস্টেমের ফুল ডেটা ডিক্রিপ্ট এবং সেশন সচল করতে ৬,০০০/- টাকা পেমেন্ট সম্পন্ন করুন।</p>
+                        <h1 style="color:#ffffff; font-size: 30px; margin: 10px 0; font-family:'Orbitron';">৬,০০০ ৳</h1>
+                        <p style="font-size:12px; line-height:1.5; color:#94a3b8; margin-top:10px;">
+                            পেমেন্টটি করার সাথে সাথেই এই কন্ট্রোল প্যানেলের সমস্ত ফিচারের আজীবন মেয়াদী লাইসেন্স কি (License Key) জেনারেট হবে। এরপর আর কোনো ফি লাগবে না।
+                        </p>
+                    </div>`;
+            } else {
+                document.getElementById('modalBody').innerHTML = `
+                    <div style="padding: 20px 10px;">
+                        <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:36px; margin-bottom:15px;"></i>
+                        <p style="font-size:15px;">অনুমতি অস্বীকৃত! সিস্টেম অ্যাক্সেস করার আগে মূল ড্যাশবোর্ড থেকে <strong>USA IP</strong> কানেক্ট করে নিন।</p>
+                    </div>`;
+            }
+            document.getElementById('modal').style.display = "flex";
+        }
     </script>
 </body>
 </html>
